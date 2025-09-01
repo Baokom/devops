@@ -1,0 +1,16 @@
+apiVersion: v2
+name: webapp
+description: A generic Helm chart for web applications
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - webapp
+  - kubernetes
+  - helm
+home: https://github.com/your-org/webapp-helm-chart
+sources:
+  - https://github.com/your-org/webapp-helm-chart
+maintainers:
+  - name: DevOps Team
+    email: devops@yourcompany.com
