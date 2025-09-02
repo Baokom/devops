@@ -22,6 +22,10 @@ spec:
     metadata:
       labels:
         {{- include "webapp.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: "{{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}"
+        checksum/secret: "{{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}"
+        timestamp: {{ now | quote }}
     spec:
       restartPolicy: {{ .Values.deployment.restartPolicy }}
       containers:
