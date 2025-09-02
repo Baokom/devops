@@ -11,6 +11,10 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
+  {{- with .Values.deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "webapp.selectorLabels" . | nindent 6 }}
