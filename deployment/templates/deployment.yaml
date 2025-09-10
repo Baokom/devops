@@ -67,5 +67,35 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if or .Values.persistentVolume.enabled .Values.configMapVolume.enabled }}
+          volumeMounts:
+            {{- if .Values.persistentVolume.enabled }}
+            - name: {{ include "webapp.fullname" . }}-storage
+              mountPath: {{ .Values.persistentVolume.mountPath | default "/data" }}
+              {{- if .Values.persistentVolume.subPath }}
+              subPath: {{ .Values.persistentVolume.subPath }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.configMapVolume.enabled }}
+            - name: {{ include "webapp.configMapName" . }}
+              mountPath: {{ .Values.configMapVolume.mountPath }}
+              {{- if .Values.configMapVolume.subPath }}
+              subPath: {{ .Values.configMapVolume.subPath }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
           resources:
             {{- toYaml .Values.deployment.container.resources | nindent 12 }}
+      {{- if or .Values.persistentVolume.enabled .Values.configMapVolume.enabled }}
+      volumes:
+        {{- if .Values.persistentVolume.enabled }}
+        - name: {{ include "webapp.fullname" . }}-storage
+          persistentVolumeClaim:
+            claimName: {{ include "webapp.fullname" . }}-pvc
+        {{- end }}
+        {{- if .Values.configMapVolume.enabled }}
+        - name: {{ include "webapp.configMapName" . }}
+          configMap:
+            name: {{ include "webapp.configMapName" . }}
+        {{- end }}
+      {{- end }}

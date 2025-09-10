@@ -1,0 +1,31 @@
+{{- if .Values.persistentVolume.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "webapp.fullname" . }}-pvc
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    {{- include "webapp.labels" . | nindent 4 }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    {{- range .Values.persistentVolume.accessModes }}
+    - {{ . }}
+    {{- end }}
+  {{- if .Values.persistentVolume.storageClass }}
+  storageClassName: {{ .Values.persistentVolume.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolume.size }}
+  {{- if .Values.persistentVolume.selector }}
+  selector:
+    {{- toYaml .Values.persistentVolume.selector | nindent 4 }}
+  {{- end }}
+  {{- if .Values.persistentVolume.volumeName }}
+  volumeName: {{ .Values.persistentVolume.volumeName }}
+  {{- end }}
+{{- end }}

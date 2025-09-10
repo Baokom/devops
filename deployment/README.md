@@ -6,6 +6,7 @@ A generic Helm chart for deploying web applications to Kubernetes.
 
 - ✅ **Fully Generic**: No project-specific hardcoded values
 - ✅ **ConfigMaps & Secrets**: Separate configuration from code
+- ✅ **Volume Support**: Persistent storage, ConfigMap/Secret mounting, and more
 - ✅ **Ingress Support**: Multiple ingress controllers supported
 - ✅ **Health Checks**: Liveness and readiness probes
 - ✅ **Flexibility**: External ConfigMaps/Secrets support
@@ -93,6 +94,17 @@ helm install my-app ./webapp \
 | `ingress.hosts` | Ingress hosts configuration | `[]` |
 | `ingress.tls` | Ingress TLS configuration | `[]` |
 
+### Persistent Volume Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `persistentVolume.enabled` | Enable persistent storage | `false` |
+| `persistentVolume.mountPath` | Mount path in container | `/data` |
+| `persistentVolume.subPath` | Sub path within volume | `""` |
+| `persistentVolume.size` | Storage size | `10Gi` |
+| `persistentVolume.accessModes` | Access modes | `["ReadWriteOnce"]` |
+| `persistentVolume.storageClass` | Storage class | `""` |
+
 ## Example Configurations
 
 ### Basic Web App
@@ -143,6 +155,50 @@ secret:
 externalSecret:
   enabled: true
   name: my-existing-secret
+```
+
+### With Persistent Storage
+
+```yaml
+# values.yaml
+app:
+  name: my-app
+  namespace: production
+
+image:
+  repository: my-registry/my-app
+  tag: "v1.0.0"
+
+# Omogući trajno skladištenje
+persistentVolume:
+  enabled: true
+  mountPath: /var/www/html/uploads
+  size: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClass: "fast-ssd"
+
+deployment:
+  replicas: 2
+  container:
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 250m
+      limits:
+        memory: 1Gi
+        cpu: 500m
+```
+
+### Simple Development Setup
+
+```yaml
+# values.yaml
+persistentVolume:
+  enabled: true
+  mountPath: /app/data
+  size: 5Gi
+  # koristi default storage class
 ```
 
 ## Upgrade

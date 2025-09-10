@@ -1,0 +1,69 @@
+# Primer konfiguracije za PersistentVolume
+
+# Osnovne aplikacijske postavke
+app:
+  namespace: default
+
+image:
+  repository: nginx
+  tag: "1.21"
+  pullPolicy: IfNotPresent
+
+deployment:
+  replicas: 1
+  restartPolicy: Always
+  container:
+    name: webapp
+    port: 80
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+# PersistentVolume konfiguracija
+persistentVolume:
+  enabled: true
+  mountPath: /var/www/html/data  # default: /data
+  # subPath: data  # opciono - za mount-ovanje samo dela volume-a
+  
+  # PVC parametri
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClass: ""  # koristi default storage class
+  
+  # Napredne opcije (opciono)
+  # selector:
+  #   matchLabels:
+  #     app: my-app
+  # volumeName: my-existing-pv
+
+# ConfigMap i Secret (nezavisan od volume-a)
+configMap:
+  enabled: true
+  data:
+    NODE_ENV: "production"
+    API_URL: "https://api.example.com"
+
+# ConfigMap Volume opcije
+configMapVolume:
+  enabled: false
+  mountPath: /etc/redis  # putanja gde će se mount-ovati
+  subPath: ""  # opciono - za mount-ovanje samo dela ConfigMap-a
+
+secret:
+  enabled: true
+  data:
+    database-password: cGFzc3dvcmQxMjM=  # base64 encoded
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: false
