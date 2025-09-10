@@ -25,7 +25,6 @@ deployment:
 
 # PersistentVolume konfiguracija
 persistentVolume:
-  enabled: true
   mountPath: /var/www/html/data  # default: /data
   # subPath: data  # opciono - za mount-ovanje samo dela volume-a
   
@@ -43,27 +42,23 @@ persistentVolume:
 
 # ConfigMap i Secret (nezavisan od volume-a)
 configMap:
-  enabled: true
   data:
     NODE_ENV: "production"
     API_URL: "https://api.example.com"
 
 # ConfigMap Volume opcije
 configMapVolume:
-  enabled: false
   mountPath: /etc/redis  # putanja gde će se mount-ovati
   subPath: ""  # opciono - za mount-ovanje samo dela ConfigMap-a
 
 secret:
-  enabled: true
   data:
     database-password: cGFzc3dvcmQxMjM=  # base64 encoded
 
 service:
-  enabled: true
   type: ClusterIP
   port: 80
   targetPort: 80
 
-ingress:
-  enabled: false
+# ingress:
+  # enabled: false
